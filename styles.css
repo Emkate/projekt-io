@@ -1,0 +1,120 @@
+body{
+    margin: 0;
+    padding: 0;
+    font-family: 'Miriam Libre', sans-serif;
+}
+
+button{
+    font-family: 'Miriam Libre', sans-serif;
+}
+
+div{
+    box-sizing: border-box;
+}
+
+.labirynth-window{
+    position: absolute;
+    left: 0;
+    right: 300px;
+    top: 0;
+    bottom: 0;
+
+}
+
+.action-view{
+    height: calc(100vh - 100px);
+    width: calc(100vh - 100px);
+    position: absolute;
+    left: 50%;
+    margin-left: calc(-50vh + 50px);
+    margin-top: 50px;
+    border: 0px #333 solid;
+    background-color: #ccc;
+}
+
+.labirynth-menu{
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    top: 0;
+    width: 300px;
+}
+
+.menu-header{
+    display: inline-block;
+    float: left;
+    width: 100%;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 20px;
+    color: #333;
+}
+
+.menu-item-wrapper{
+    display: inline-block;
+    float: left;
+    margin-top: 20px;
+    width: 100%;
+}
+
+.menu-label{
+    display: inline-block;
+    float: left;
+    width: 50%;
+    text-align: right;
+    padding-right: 10px;
+    height: 24px;
+    line-height: 24px;
+    font-size: 13px;
+    font-weight: bold;
+    color: #333;
+}
+
+.menu-select{
+    display: inline-block;
+    float: left;
+    height: 24px;
+    text-align: center;
+    padding-right: 16px;
+}
+
+.field-item{
+    display: inline-block;
+    float: left;
+    border: 1px #fff solid;
+    background-color: #fff;
+}
+
+.field-item--black{
+    background-color: #333;
+    border-color: #333;
+
+}
+
+.menu-item-button{
+    height: 30px;
+    width: 160px;
+    box-shadow: none;
+    border: 1px #333 solid;
+    background-color: #fff;
+    font-family: 'Miriam Libre', sans-serif;
+    font-size: 13px;
+    font-weight: bold;
+    color: #333;
+    transition: .3s;
+    outline: none;
+}
+
+.menu-item-button:hover{
+    color: #fff;
+    background-color: #333;
+    transition: .3s;
+    cursor: pointer;
+}
+
+
+
+.text-center{
+    text-align: center;
+}

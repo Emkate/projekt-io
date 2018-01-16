@@ -68,7 +68,6 @@ alghoritmVC.buildLabyrinth = function() {
     while (i>0) {
         if(moves.length){
             var possibleDirections = "";
-            console.log(posX, posY)
             if (posX + 2 > 0 && posX + 2 < alghoritmVC.options.size && alghoritmVC.fieldArray[posX + 2][posY] === 1) {
                 possibleDirections += "S";
             }
@@ -121,6 +120,7 @@ alghoritmVC.buildLabyrinth = function() {
         }
 
     }
+    alghoritmVC.setLabyrinthEnds();
 };
 
 alghoritmVC.makeWayOnPosition = function(posX, posY, direction) {
@@ -139,6 +139,113 @@ alghoritmVC.makeWayOnPosition = function(posX, posY, direction) {
         }
     }
     $('[position-x="' + posX + '"][position-y="' + posY + '"]').removeClass("field-item--black");
+};
+
+alghoritmVC.setLabyrinthEnds = function(){
+    alghoritmVC.fieldArray[1][1] = 2;
+    $('[position-x="' + 1 + '"][position-y="' + 1 + '"]').addClass("field-item--start");
+    alghoritmVC.fieldArray[alghoritmVC.options.size-2][alghoritmVC.options.size-2] = 3;
+    $('[position-x="' + (alghoritmVC.options.size-2) + '"][position-y="' + (alghoritmVC.options.size-2) + '"]').addClass("field-item--finish");
+
+    $('[data-function="begin-ga-button"]').off('click').click(function(){
+        alghoritmVC.onBeginGAClick();
+    });
+};
+
+alghoritmVC.onBeginGAClick = function(){
+    alghoritmVC.firstExecutionTraces = [];
+    alghoritmVC.secondExecutionTraces = [];
+    alghoritmVC.startGA(100, 2);
+};
+
+alghoritmVC.startGA = function(index, execution){
+    if(index > 0){
+        // setTimeout(function(){
+            $(".player-dot").remove();
+            $(".trail-dot").remove();
+
+
+            var playerX = 1;
+            var playerY = 1;
+            var possibleDirections = "NSWE";
+            var trace = [];
+            var directionsOrder = [];
+            var fitnessScore = 0;
+            var i = 0;
+
+            while(i>=0){
+
+                var move = alghoritmVC.randomIntFromInterval(0, possibleDirections.length - 1);
+                if(possibleDirections[move] === "N"){
+                    playerX -= 1;
+
+                }
+                if(possibleDirections[move] === "S"){
+                    playerX += 1;
+
+                }
+                if(possibleDirections[move] === "W"){
+                    playerY -= 1;
+
+                }
+                if(possibleDirections[move] === "E"){
+                    playerY += 1;
+
+                }
+
+                if(alghoritmVC.fieldArray[playerX][playerY] === 0){
+                    fitnessScore = alghoritmVC.calculateFitness(playerX, playerY, trace.length);
+                    i++;
+                }
+                else{
+                    i = -1;
+                }
+                directionsOrder.push(possibleDirections[move]);
+                trace.unshift([playerX, playerY]);
+
+            }
+            if(execution === 2){
+                alghoritmVC.firstExecutionTraces.unshift({
+                    'index' : index,
+                    'directionsOrder' : directionsOrder,
+                    'fitnessScore' : fitnessScore
+                });
+            }
+            if(execution === 1){
+                alghoritmVC.secondExecutionTraces.unshift({
+                    'index' : index,
+                    'directionsOrder' : directionsOrder,
+                    'fitnessScore' : fitnessScore
+                });
+            }
+
+            alghoritmVC.addPlayerDot(1,1);
+            alghoritmVC.drawPlayerTrace(trace, trace.length-1);
+            alghoritmVC.startGA(index-1, execution);
+        // }, 0);
+    }
+    if(index === 0 && execution > 0){
+        alghoritmVC.startGA(100, execution-1);
+    }
+};
+
+alghoritmVC.calculateFitness = function(playerX, playerY, traceLength){
+    return Math.floor(((playerX/(alghoritmVC.options.size-2))*100) + ((playerY/(alghoritmVC.options.size-2))*100));//-(traceLength/alghoritmVC.options.size-2)*10;
+};
+
+alghoritmVC.drawPlayerTrace = function(trace, n){
+    if(n > 0){
+        setTimeout(function(){
+            alghoritmVC.addPlayerDot(trace[n][0], trace[n][1]);
+            alghoritmVC.drawPlayerTrace(trace, n-1);
+        }, 0);
+    }
+};
+
+alghoritmVC.addPlayerDot = function(playerX, playerY){
+    $(".player-dot").remove();
+    var $position = $('[position-x="' + (playerX) + '"][position-y="' + (playerY) + '"]');
+        $position.append('<div class="trail-dot"></div><div class="player-dot"></div>');
 };
 
 alghoritmVC.randomIntFromInterval = function(min, max) {

@@ -14,7 +14,8 @@ kilka rodzajów pól:
 
 alghoritmVC.options = {
     'size': 11,
-    'steps': 16
+    'steps': 16,
+    'iterations' : 50
 };
 
 alghoritmVC.initView = function() {
@@ -29,18 +30,21 @@ alghoritmVC.initView = function() {
         alghoritmVC.beginAlghoritm();
 
     });
+
+    $(".menu-item-slider").off('input change').on('input change', function(){
+        alghoritmVC.options.steps = $(this).val();
+    });
 };
 
 alghoritmVC.onSizeSelect = function() {
     var size = $(this).val();
     alghoritmVC.options.size = size;
+    alghoritmVC.options.steps = (size-3)*2;
     $(".menu-item-slider").attr('min', (size-3)*2);
     $(".menu-item-slider").val((size-3)*2);
     $(".menu-item-slider").attr('max', Math.ceil((size-2)/2)*(size-5)+Math.floor((size-2)/2)*2);
 
-    $(".menu-item-slider").off('input change').on('input change', function(){
-        alghoritmVC.options.steps = $(this).val();
-    })
+
 };
 
 alghoritmVC.beginAlghoritm = function() {
@@ -172,11 +176,78 @@ alghoritmVC.setLabyrinthEnds = function(){
 };
 
 alghoritmVC.onBeginGAClick = function(){
-    var firstPopulation = alghoritmVC.generatePopulation(alghoritmVC.options.steps, 100);
-    var secondPopulation = alghoritmVC.generatePopulation(alghoritmVC.options.steps, 100);
+    var firstPopulation = alghoritmVC.generatePopulation(alghoritmVC.options.steps, 60);
+    var secondPopulation = alghoritmVC.generatePopulation(alghoritmVC.options.steps, 60);
+
+    alghoritmVC.onGAStep(firstPopulation, secondPopulation,  0);
 };
 
-alghoritmVC.onGAStep = function(rootPopulation){
+alghoritmVC.onGAStep = function(rootPopulation, rootPopulation2, iterations){
+    var oldPopulation = rootPopulation.slice(0, rootPopulation.length/2);
+    var newPopulation =  rootPopulation2.slice(0, rootPopulation2.length/2); //alghoritmVC.generatePopulation(alghoritmVC.options.steps, 60);
+        // newPopulation = newPopulation.slice(0, newPopulation.length/2);
+
+    var possibleDirections = "NSWE";
+
+    var mixedPopulation = [];
+    var mixedChromosome1,
+        mixedChromosome2,
+        rand;
+
+    for(var i=0; i<oldPopulation.length; i++){
+
+            mixedChromosome1 = [];
+            mixedChromosome2 = [];
+
+            for(var j=0; j<oldPopulation[i].chromosome.length; j = j+2){
+                mixedChromosome1.push(oldPopulation[i].chromosome[j]);
+                mixedChromosome1.push(newPopulation[i].chromosome[j+1]);
+                mixedChromosome2.push(oldPopulation[i].chromosome[j+1]);
+                mixedChromosome2.push(newPopulation[i].chromosome[j]);
+            }
+
+        if(alghoritmVC.randomIntFromInterval(1,10) === 10){
+            for(var k=0; k<5; k++){
+                mixedChromosome1[alghoritmVC.randomIntFromInterval(Math.floor(mixedChromosome1.length/2),mixedChromosome1.length-1)] = possibleDirections[alghoritmVC.randomIntFromInterval(0,possibleDirections.length-1)];
+                mixedChromosome2[alghoritmVC.randomIntFromInterval(Math.floor(mixedChromosome1.length/2),mixedChromosome1.length-1)] = possibleDirections[alghoritmVC.randomIntFromInterval(0,possibleDirections.length-1)];
+
+            }
+        }
+
+
+        mixedPopulation.push({
+            'fitness' : alghoritmVC.calculateFitness(mixedChromosome1),
+            'chromosome' : mixedChromosome1
+        });
+        mixedPopulation.push({
+            'fitness' : alghoritmVC.calculateFitness(mixedChromosome2),
+            'chromosome' : mixedChromosome2
+        });
+    }
+
+    mixedPopulation.sort(alghoritmVC.compare);
+
+    iterations++;
+
+    if(mixedPopulation[0].fitness){
+        if(mixedPopulation[0].fitness < 140){
+            if(mixedPopulation[0].fitness > 100){
+                alghoritmVC.calculateFitness(mixedChromosome1, 1);
+            }
+
+            alghoritmVC.onGAStep(mixedPopulation, mixedPopulation, iterations);
+            // console.log(iterations);
+        }
+        else{
+            console.log(mixedPopulation[0]);
+            console.log(iterations);
+        }
+    }
+
+
+    // return mixedPopulation;
+
+
 
 }
 
@@ -215,11 +286,13 @@ alghoritmVC.compare = function(a,b) {
 };
 
 
-alghoritmVC.calculateFitness = function(chromosome){
+alghoritmVC.calculateFitness = function(chromosome, withDrawing){
     var pos_x = 1;
     var pos_y = 1;
 
     var result = 0;
+
+    var $position;
 
     for(var i=0; i<chromosome.length; i++){
         if(alghoritmVC.fieldArray[pos_y][pos_x] === 0){
@@ -239,11 +312,27 @@ alghoritmVC.calculateFitness = function(chromosome){
             pos_x -= 1;
         }
 
+        if(withDrawing === 1){
+            // $position = $('[position-x="' + (pos_y) + '"][position-y="' + (pos_x) + '"]');
+            // $(".player-dot").remove();
+            // $position.append('<div class="trail-dot"></div><div class="player-dot"></div>');
+        }
+
+
+
+
 
         if(alghoritmVC.fieldArray[pos_y][pos_x] === 1 || alghoritmVC.fieldArray[pos_y][pos_x] === 2 || alghoritmVC.fieldArray[pos_y][pos_x] === 3){
+            if(withDrawing === 1){
+                // $(".trail-dot").remove();
+            }
             return result;
         }
     }
+    if(withDrawing !== 1){
+        return result;
+    }
+
 
 
 

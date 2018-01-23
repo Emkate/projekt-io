@@ -71,6 +71,11 @@ div{
     color: #333;
 }
 
+.menu-label--full{
+    width: 100%;
+    text-align: center;
+}
+
 .menu-select{
     display: inline-block;
     float: left;
@@ -141,6 +146,91 @@ div{
     background-color: #333;
     transition: .3s;
     cursor: pointer;
+}
+
+.menu-item-slider {
+  -webkit-appearance: none;
+  margin: 18px 0;
+  width: calc(100% - 30px);
+}
+.menu-item-slider:focus {
+  outline: none;
+}
+.menu-item-slider::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 8.4px;
+  cursor: pointer;
+  animate: 0.2s;
+  background: #fff;
+  border: 0.2px solid #010101;
+}
+.menu-item-slider::-webkit-slider-thumb {
+  border: 1px solid #000000;
+  height: 16px;
+  width: 16px;
+  background: #ffffff;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -4px;
+}
+.menu-item-slider:focus::-webkit-slider-runnable-track {
+  background: #fff;
+}
+.menu-item-slider::-moz-range-track {
+  width: 100%;
+  height: 8.4px;
+  cursor: pointer;
+  animate: 0.2s;
+  box-shadow: 1px 1px 1px #333, 0px 0px 1px #0d0d0d;
+  background: #fff;
+  border-radius: 1.3px;
+  border: 0.2px solid #010101;
+}
+.menu-item-slider::-moz-range-thumb {
+  box-shadow: 1px 1px 1px #333, 0px 0px 1px #0d0d0d;
+  border: 1px solid #333;
+  height: 36px;
+  width: 16px;
+  border-radius: 3px;
+  background: #ffffff;
+  cursor: pointer;
+}
+.menu-item-slider::-ms-track {
+  width: 100%;
+  height: 8.4px;
+  cursor: pointer;
+  animate: 0.2s;
+  background: transparent;
+  border-color: transparent;
+  border-width: 16px 0;
+  color: transparent;
+}
+.menu-item-slider::-ms-fill-lower {
+  background: #fff;
+  border: 0.2px solid #010101;
+  border-radius: 2.6px;
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+}
+.menu-item-slider::-ms-fill-upper {
+  background: #fff;
+  border: 0.2px solid #010101;
+  border-radius: 2.6px;
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+}
+.menu-item-slider::-ms-thumb {
+  box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+  border: 1px solid #000000;
+  height: 36px;
+  width: 16px;
+  border-radius: 3px;
+  background: #ffffff;
+  cursor: pointer;
+}
+.menu-item-slider:focus::-ms-fill-lower {
+  background: #fff;
+}
+.menu-item-slider:focus::-ms-fill-upper {
+  background: #fff;
 }
 
 

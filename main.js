@@ -13,16 +13,34 @@ kilka rodzajów pól:
 */
 
 alghoritmVC.options = {
-    'size': '11'
+    'size': 11,
+    'steps': 16
 };
 
 alghoritmVC.initView = function() {
+    var size = alghoritmVC.options.size;
+
+    $(".menu-item-slider").attr('min', (size-3)*2);
+    $(".menu-item-slider").val((size-3)*2);
+    $(".menu-item-slider").attr('max', Math.ceil((size-2)/2)*(size-5)+Math.floor((size-2)/2)*2);
+
     alghoritmVC.$sizeSelect.off('change').on('change', alghoritmVC.onSizeSelect);
-    alghoritmVC.$beginButton.off('click').on('click', alghoritmVC.beginAlghoritm);
+    alghoritmVC.$beginButton.off('click').on('click', function(){
+        alghoritmVC.beginAlghoritm();
+
+    });
 };
 
 alghoritmVC.onSizeSelect = function() {
-    alghoritmVC.options.size = $(this).val();
+    var size = $(this).val();
+    alghoritmVC.options.size = size;
+    $(".menu-item-slider").attr('min', (size-3)*2);
+    $(".menu-item-slider").val((size-3)*2);
+    $(".menu-item-slider").attr('max', Math.ceil((size-2)/2)*(size-5)+Math.floor((size-2)/2)*2);
+
+    $(".menu-item-slider").off('input change').on('input change', function(){
+        alghoritmVC.options.steps = $(this).val();
+    })
 };
 
 alghoritmVC.beginAlghoritm = function() {
@@ -149,88 +167,86 @@ alghoritmVC.setLabyrinthEnds = function(){
 
     $('[data-function="begin-ga-button"]').off('click').click(function(){
         alghoritmVC.onBeginGAClick();
+        // alghoritmVC.generatePopulation(alghoritmVC.options.steps, 100);
     });
 };
 
 alghoritmVC.onBeginGAClick = function(){
-    alghoritmVC.firstExecutionTraces = [];
-    alghoritmVC.secondExecutionTraces = [];
-    alghoritmVC.startGA(100, 2);
+    var firstPopulation = alghoritmVC.generatePopulation(alghoritmVC.options.steps, 100);
+    var secondPopulation = alghoritmVC.generatePopulation(alghoritmVC.options.steps, 100);
 };
 
-alghoritmVC.startGA = function(index, execution){
-    if(index > 0){
-        // setTimeout(function(){
-            $(".player-dot").remove();
-            $(".trail-dot").remove();
+alghoritmVC.onGAStep = function(rootPopulation){
 
+}
 
-            var playerX = 1;
-            var playerY = 1;
-            var possibleDirections = "NSWE";
-            var trace = [];
-            var directionsOrder = [];
-            var fitnessScore = 0;
-            var i = 0;
-
-            while(i>=0){
-
-                var move = alghoritmVC.randomIntFromInterval(0, possibleDirections.length - 1);
-                if(possibleDirections[move] === "N"){
-                    playerX -= 1;
-
-                }
-                if(possibleDirections[move] === "S"){
-                    playerX += 1;
-
-                }
-                if(possibleDirections[move] === "W"){
-                    playerY -= 1;
-
-                }
-                if(possibleDirections[move] === "E"){
-                    playerY += 1;
-
-                }
-
-                if(alghoritmVC.fieldArray[playerX][playerY] === 0){
-                    fitnessScore = alghoritmVC.calculateFitness(playerX, playerY, trace.length);
-                    i++;
-                }
-                else{
-                    i = -1;
-                }
-                directionsOrder.push(possibleDirections[move]);
-                trace.unshift([playerX, playerY]);
-
-            }
-            if(execution === 2){
-                alghoritmVC.firstExecutionTraces.unshift({
-                    'index' : index,
-                    'directionsOrder' : directionsOrder,
-                    'fitnessScore' : fitnessScore
-                });
-            }
-            if(execution === 1){
-                alghoritmVC.secondExecutionTraces.unshift({
-                    'index' : index,
-                    'directionsOrder' : directionsOrder,
-                    'fitnessScore' : fitnessScore
-                });
-            }
-
-            alghoritmVC.addPlayerDot(1,1);
-            alghoritmVC.drawPlayerTrace(trace, trace.length-1);
-            alghoritmVC.startGA(index-1, execution);
-        // }, 0);
+alghoritmVC.generatePopulation = function(chromosomeLen, populationSize){
+    var possibleDirections = "NSWE";
+    var populationArray = [];
+    var chromosomeArray;
+    for(var i=0; i<populationSize; i++){
+        chromosomeArray = [];
+        for(var j=0; j<chromosomeLen; j++){
+            chromosomeArray.push(possibleDirections[alghoritmVC.randomIntFromInterval(0, possibleDirections.length - 1)]);
+        }
+        populationArray.push({
+            'fitness' : alghoritmVC.calculateFitness(chromosomeArray),
+            'chromosome' : chromosomeArray
+        });
     }
-    if(index === 0 && execution > 0){
-        alghoritmVC.startGA(100, execution-1);
-    }
+
+    populationArray.sort(alghoritmVC.compare);
+
+    // alghoritmVC.crossPopulations(populationArray);
+
+    return populationArray;
 };
 
-alghoritmVC.calculateFitness = function(playerX, playerY, traceLength){
-    return Math.floor(((playerX/(alghoritmVC.options.size-2))*100) + ((playerY/(alghoritmVC.options.size-2))*100));//-(traceLength/alghoritmVC.options.size-2)*10;
+alghoritmVC.crossPopulations = function(population){
+    var newPopulation
+};
+
+alghoritmVC.compare = function(a,b) {
+  if (a.fitness < b.fitness)
+    return 1;
+  if (a.fitness > b.fitness)
+    return -1;
+  return 0;
+};
+
+
+alghoritmVC.calculateFitness = function(chromosome){
+    var pos_x = 1;
+    var pos_y = 1;
+
+    var result = 0;
+
+    for(var i=0; i<chromosome.length; i++){
+        if(alghoritmVC.fieldArray[pos_y][pos_x] === 0){
+            result = Math.floor(((pos_x/(alghoritmVC.options.size-2))*100) + ((pos_y/(alghoritmVC.options.size-2))*100));
+        }
+        if(chromosome[i] === "N"){
+            pos_y -= 1;
+        }
+        if(chromosome[i] === "E"){
+            pos_x += 1;
+        }
+        if(chromosome[i] === "S"){
+            pos_y += 1;
+        }
+        if(chromosome[i] === "W"){
+
+            pos_x -= 1;
+        }
+
+
+        if(alghoritmVC.fieldArray[pos_y][pos_x] === 1 || alghoritmVC.fieldArray[pos_y][pos_x] === 2 || alghoritmVC.fieldArray[pos_y][pos_x] === 3){
+            return result;
+        }
+    }
+
+
+
 };
 
 alghoritmVC.drawPlayerTrace = function(trace, n){

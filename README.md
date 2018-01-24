@@ -23,6 +23,6 @@ Projekt może nie działać na starszych przeglądarkach!
 ### Zasada działania
 #### Po uruchomieniu projektu należy:
 1. wybrać rozmiar labiryntu, każdy z rozmiarów uwzględnia również pola na ściany zewnętrzne labiryntu, więc nasz algorytm poruszać się będzie w przestrzeni (x-2)^2
-2. kliknąć 'Generuj labirynt', labirynt generowany jest za pomocą algorytmu First Deep Search,
+2. kliknąć 'Generuj labirynt', labirynt generowany jest za pomocą algorytmu Depth-first search [link](https://en.wikipedia.org/wiki/Maze_generation_algorithm#Depth-first_search),
 3. za pomocą suwaka ustalić ilość genów w chromosomie, przy każdej zmianie rozmiaru labiryntu wartość suwaka jest zmieniana na minimalną ilość pól możliwą do przejścia danej wielkości labiryntu (ilość ta nie uwzględnia ścian, co oznacza, że ustawiając suwak na minimum, algorytm może nie znaleźć drogi),
 4. Kliknąć 'Uruchom algorytm'
